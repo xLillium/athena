@@ -14,8 +14,18 @@ public class Book {
     private String title;
     private String author;
     private String ISBN;
-    @ManyToMany(mappedBy = "books", fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(mappedBy = "books", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<User> owners = new HashSet<>();
+
+    public Book() {
+
+    }
+
+    public Book(String title, String author, String isbn) {
+        this.title = title;
+        this.author = author;
+        this.ISBN = isbn;
+    }
 
     public Long getId() {
         return id;
