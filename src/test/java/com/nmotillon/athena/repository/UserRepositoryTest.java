@@ -1,7 +1,6 @@
-package com.nmotillon.athena;
+package com.nmotillon.athena.repository;
 
 import com.nmotillon.athena.model.User;
-import com.nmotillon.athena.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
