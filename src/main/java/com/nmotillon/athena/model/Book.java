@@ -2,6 +2,9 @@ package com.nmotillon.athena.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "books")
 public class Book {
@@ -11,6 +14,18 @@ public class Book {
     private String title;
     private String author;
     private String ISBN;
+    @ManyToMany(mappedBy = "books", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<User> owners = new HashSet<>();
+
+    public Book() {
+
+    }
+
+    public Book(String title, String author, String isbn) {
+        this.title = title;
+        this.author = author;
+        this.ISBN = isbn;
+    }
 
     public Long getId() {
         return id;
@@ -42,5 +57,13 @@ public class Book {
 
     public void setISBN(String ISBN) {
         this.ISBN = ISBN;
+    }
+
+    public Set<User> getOwners() {
+        return owners;
+    }
+
+    public void setOwners(Set<User> owners) {
+        this.owners = owners;
     }
 }

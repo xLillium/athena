@@ -48,3 +48,14 @@ ALTER TABLE ONLY public.books ALTER COLUMN id SET DEFAULT nextval('public.books_
 
 ALTER TABLE ONLY public.books
     ADD CONSTRAINT books_pkey PRIMARY KEY (id);
+
+-- User_Books association table
+CREATE TABLE public.user_books (
+    user_id integer NOT NULL,
+    book_id integer NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE,
+    FOREIGN KEY (book_id) REFERENCES public.books(id) ON DELETE CASCADE,
+    PRIMARY KEY(user_id, book_id)
+);
+
+ALTER TABLE public.user_books OWNER TO athena;
