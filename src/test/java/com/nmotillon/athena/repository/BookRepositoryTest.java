@@ -20,7 +20,7 @@ public class BookRepositoryTest {
         Book book = new Book();
         book.setAuthor("George Orwell");
         book.setTitle("1984");
-        book.setISBN("1234567890");
+        book.setIsbn("1234567890");
         bookRepository.save(book);
 
         Optional<Book> foundBook = bookRepository.findById(book.getId());
