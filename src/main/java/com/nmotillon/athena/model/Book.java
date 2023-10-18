@@ -1,6 +1,8 @@
 package com.nmotillon.athena.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,8 +13,12 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank(message = "Title is mandatory")
     private String title;
+    @NotBlank(message = "Author is mandatory")
     private String author;
+    @NotBlank(message = "ISBN is mandatory")
+    @Pattern(regexp = "^(\\d{10}|\\d{13})$", message = "ISBN should be either 10 or 13 digits")
     private String isbn;
     @ManyToMany(mappedBy = "books", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<User> owners = new HashSet<>();
