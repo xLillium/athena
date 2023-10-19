@@ -5,6 +5,7 @@ import com.nmotillon.athena.model.BorrowRecord;
 import com.nmotillon.athena.model.User;
 import com.nmotillon.athena.repository.BookRepository;
 import com.nmotillon.athena.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@Transactional
 public class BorrowRecordValidationTest {
     @Autowired
     private LocalValidatorFactoryBean validator;
