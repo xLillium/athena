@@ -19,6 +19,7 @@ public class Book {
     private String author;
     @NotBlank(message = "ISBN is mandatory")
     @Pattern(regexp = "^(\\d{10}|\\d{13})$", message = "ISBN should be either 10 or 13 digits")
+    @Column(unique = true)
     private String isbn;
     @ManyToMany(mappedBy = "books", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<User> owners = new HashSet<>();
