@@ -1,5 +1,6 @@
 package com.nmotillon.athena.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -22,6 +23,7 @@ public class Book {
     @Column(unique = true)
     private String isbn;
     @ManyToMany(mappedBy = "books", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JsonIgnore
     private Set<User> owners = new HashSet<>();
 
     public Book() {
