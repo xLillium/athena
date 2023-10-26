@@ -1,5 +1,6 @@
 package com.nmotillon.athena.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -20,6 +21,7 @@ public class User {
     @JoinTable(name = "user_books",
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "book_id") })
+    @JsonIgnore
     private Set<Book> books = new HashSet<>();
 
     public User() {
