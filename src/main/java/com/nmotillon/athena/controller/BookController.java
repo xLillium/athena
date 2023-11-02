@@ -21,35 +21,30 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<BookDTO> createBook(@Valid @RequestBody CreateOrUpdateBookDTO bookDTO) {
-        BookDTO newBook = bookService.createBook(bookDTO);
-        return new ResponseEntity<>(newBook, HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public BookDTO createBook(@Valid @RequestBody CreateOrUpdateBookDTO bookDTO) {
+        return bookService.createBook(bookDTO);
     }
 
     @GetMapping
-    public ResponseEntity<List<BookDTO>> getAllBooks() {
-        List<BookDTO> books = bookService.findAllBooks();
-        return ResponseEntity.ok(books);
+    public List<BookDTO> getAllBooks() {
+        return bookService.findAllBooks();
     }
 
     @GetMapping("/{bookId}")
-    public ResponseEntity<BookDTO> getBookById(@PathVariable Long bookId) {
-        BookDTO bookDTO = bookService.findBookById(bookId);
-        return ResponseEntity.ok(bookDTO);
+    public BookDTO getBookById(@PathVariable Long bookId) {
+        return bookService.findBookById(bookId);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<BookDTO> updateBook(@PathVariable Long id,
+    @PutMapping("/{bookId}")
+    public BookDTO updateBook(@PathVariable Long bookId,
                                               @Valid @RequestBody CreateOrUpdateBookDTO updateBookDTO) {
-        BookDTO updatedBook = bookService.updateBook(id, updateBookDTO);
-        return ResponseEntity.ok(updatedBook);
+        return bookService.updateBook(bookId, updateBookDTO);
     }
 
     @PatchMapping("/{bookId}")
-    public ResponseEntity<BookDTO> patchBook(@PathVariable Long bookId, @Valid @RequestBody PatchBookDTO bookPartialUpdateDTO) {
-        BookDTO updatedBook = bookService.patchBook(bookId, bookPartialUpdateDTO);
-        return ResponseEntity.ok(updatedBook);
+    public BookDTO patchBook(@PathVariable Long bookId, @Valid @RequestBody PatchBookDTO patchBookDTO) {
+        return bookService.patchBook(bookId, patchBookDTO);
     }
-
 
 }
