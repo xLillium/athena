@@ -37,16 +37,16 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
-    public BookDTO findBookById(Long id) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Book with id " + id + " not found."));
+    public BookDTO findBookById(Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new NoSuchElementException("Book with id " + bookId + " not found."));
         return modelMapper.map(book, BookDTO.class);
     }
 
     @Transactional
-    public BookDTO updateBook(Long id, CreateOrUpdateBookDTO updateBookDTO) {
-        Book existingBook = bookRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Book not found with id: " + id));
+    public BookDTO updateBook(Long bookId, CreateOrUpdateBookDTO updateBookDTO) {
+        Book existingBook = bookRepository.findById(bookId)
+                .orElseThrow(() -> new NoSuchElementException("Book with id " + bookId + " not found."));
         modelMapper.map(updateBookDTO, existingBook);
         Book updatedBook = bookRepository.save(existingBook);
         return modelMapper.map(updatedBook, BookDTO.class);
@@ -63,6 +63,13 @@ public class BookService {
 
         Book updatedBook = bookRepository.save(book);
         return modelMapper.map(updatedBook, BookDTO.class);
+    }
+
+    @Transactional
+    public void deleteBook(Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new NoSuchElementException("Book with id " + bookId + " not found."));
+        bookRepository.delete(book);
     }
 
 }
