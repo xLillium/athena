@@ -7,6 +7,7 @@ import com.nmotillon.athena.model.Book;
 import com.nmotillon.athena.repository.BookRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -23,6 +24,7 @@ public class BookService {
         this.modelMapper = modelMapper;
     }
 
+    @Transactional
     public BookDTO createBook(CreateOrUpdateBookDTO bookDTO) {
         Book book = modelMapper.map(bookDTO, Book.class);
         Book savedBook = bookRepository.save(book);
@@ -41,6 +43,7 @@ public class BookService {
         return modelMapper.map(book, BookDTO.class);
     }
 
+    @Transactional
     public BookDTO updateBook(Long id, CreateOrUpdateBookDTO updateBookDTO) {
         Book existingBook = bookRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Book not found with id: " + id));
@@ -49,13 +52,14 @@ public class BookService {
         return modelMapper.map(updatedBook, BookDTO.class);
     }
 
+    @Transactional
     public BookDTO patchBook(Long bookId, PatchBookDTO patchBookDTO) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new NoSuchElementException("Book with id " + bookId + " not found."));
 
-        // Ignore null properties during the Mapping
-        modelMapper.getConfiguration().setPropertyCondition(context -> context.getSource() != null);
-        modelMapper.map(patchBookDTO, book);
+        Optional.ofNullable(patchBookDTO.getTitle()).ifPresent(book::setTitle);
+        Optional.ofNullable(patchBookDTO.getAuthor()).ifPresent(book::setAuthor);
+        Optional.ofNullable(patchBookDTO.getIsbn()).ifPresent(book::setIsbn);
 
         Book updatedBook = bookRepository.save(book);
         return modelMapper.map(updatedBook, BookDTO.class);
