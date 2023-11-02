@@ -1,30 +1,55 @@
 package com.nmotillon.athena.controller;
 
-import com.nmotillon.athena.model.Book;
-import com.nmotillon.athena.repository.BookRepository;
+import com.nmotillon.athena.dto.BookDTO;
+import com.nmotillon.athena.dto.CreateOrUpdateBookDTO;
+import com.nmotillon.athena.dto.PatchBookDTO;
+import com.nmotillon.athena.service.BookService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/books")
+@RequestMapping("/api/books")
 public class BookController {
-    private final BookRepository bookRepository;
+    private final BookService bookService;
 
-    public BookController(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
+
+    @PostMapping
+    public ResponseEntity<BookDTO> createBook(@Valid @RequestBody CreateOrUpdateBookDTO bookDTO) {
+        BookDTO newBook = bookService.createBook(bookDTO);
+        return new ResponseEntity<>(newBook, HttpStatus.CREATED);
     }
 
     @GetMapping
-    List<Book> getBooks() {
-        return bookRepository.findAll();
+    public ResponseEntity<List<BookDTO>> getAllBooks() {
+        List<BookDTO> books = bookService.findAllBooks();
+        return ResponseEntity.ok(books);
     }
 
     @GetMapping("/{bookId}")
-    public Book getBook(@PathVariable Long bookId) {
-        return bookRepository.findById(bookId)
-                .orElseThrow(() -> new NoSuchElementException("Book with id " + bookId + " not found."));
+    public ResponseEntity<BookDTO> getBookById(@PathVariable Long bookId) {
+        BookDTO bookDTO = bookService.findBookById(bookId);
+        return ResponseEntity.ok(bookDTO);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BookDTO> updateBook(@PathVariable Long id,
+                                              @Valid @RequestBody CreateOrUpdateBookDTO updateBookDTO) {
+        BookDTO updatedBook = bookService.updateBook(id, updateBookDTO);
+        return ResponseEntity.ok(updatedBook);
+    }
+
+    @PatchMapping("/{bookId}")
+    public ResponseEntity<BookDTO> patchBook(@PathVariable Long bookId, @Valid @RequestBody PatchBookDTO bookPartialUpdateDTO) {
+        BookDTO updatedBook = bookService.patchBook(bookId, bookPartialUpdateDTO);
+        return ResponseEntity.ok(updatedBook);
+    }
+
 
 }
