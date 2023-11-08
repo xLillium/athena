@@ -1,9 +1,19 @@
 package com.nmotillon.athena.dto;
 
+import com.nmotillon.athena.validation.OnCreate;
+import com.nmotillon.athena.validation.OnPatch;
+import com.nmotillon.athena.validation.OnUpdate;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
 public class BookDTO {
     private Long id;
+    @NotBlank(message = "Title is mandatory", groups = {OnCreate.class, OnUpdate.class})
     private String title;
+    @NotBlank(message = "Author is mandatory", groups = {OnCreate.class, OnUpdate.class})
     private String author;
+    @NotBlank(message = "ISBN is mandatory", groups = {OnCreate.class, OnUpdate.class})
+    @Pattern(regexp = "^(\\d{10}|\\d{13})$", message = "ISBN should be either 10 or 13 digits", groups = {OnCreate.class, OnUpdate.class, OnPatch.class})
     private String isbn;
 
     public BookDTO() {
