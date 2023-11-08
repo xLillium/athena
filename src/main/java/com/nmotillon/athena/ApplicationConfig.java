@@ -1,6 +1,6 @@
 package com.nmotillon.athena;
 
-import org.modelmapper.ModelMapper;
+import com.nmotillon.athena.mapper.BookMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -14,8 +14,8 @@ public class ApplicationConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
+    public BookMapper bookMapper() {
+        return BookMapper.INSTANCE;
     }
 
 }

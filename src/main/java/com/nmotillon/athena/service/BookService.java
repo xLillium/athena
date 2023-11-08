@@ -1,74 +1,60 @@
 package com.nmotillon.athena.service;
 
 import com.nmotillon.athena.dto.BookDTO;
-import com.nmotillon.athena.dto.CreateOrUpdateBookDTO;
-import com.nmotillon.athena.dto.PatchBookDTO;
+import com.nmotillon.athena.exception.BookNotFoundException;
+import com.nmotillon.athena.mapper.BookMapper;
 import com.nmotillon.athena.model.Book;
 import com.nmotillon.athena.repository.BookRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class BookService {
     private final BookRepository bookRepository;
-    private final ModelMapper modelMapper;
+    private final BookMapper bookMapper;
 
-    public BookService(BookRepository bookRepository, ModelMapper modelMapper) {
+    public BookService(BookRepository bookRepository, BookMapper bookMapper) {
         this.bookRepository = bookRepository;
-        this.modelMapper = modelMapper;
+        this.bookMapper = bookMapper;
     }
 
     @Transactional
-    public BookDTO createBook(CreateOrUpdateBookDTO bookDTO) {
-        Book book = modelMapper.map(bookDTO, Book.class);
+    public BookDTO createBook(BookDTO bookDTO) {
+        Book book = bookMapper.toEntity(bookDTO);
         Book savedBook = bookRepository.save(book);
-        return modelMapper.map(savedBook, BookDTO.class);
+        return bookMapper.toDto(savedBook);
     }
 
     public List<BookDTO> findAllBooks() {
         return bookRepository.findAll().stream()
-                .map(book -> modelMapper.map(book, BookDTO.class))
+                .map(bookMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public BookDTO findBookById(Long bookId) {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new NoSuchElementException("Book with id " + bookId + " not found."));
-        return modelMapper.map(book, BookDTO.class);
+        return bookRepository.findById(bookId)
+                .map(bookMapper::toDto)
+                .orElseThrow(() -> new BookNotFoundException(bookId));
     }
 
     @Transactional
-    public BookDTO updateBook(Long bookId, CreateOrUpdateBookDTO updateBookDTO) {
+    public BookDTO updateBook(Long bookId, BookDTO bookDTO) {
         Book existingBook = bookRepository.findById(bookId)
-                .orElseThrow(() -> new NoSuchElementException("Book with id " + bookId + " not found."));
-        modelMapper.map(updateBookDTO, existingBook);
+                .orElseThrow(() -> new BookNotFoundException(bookId));
+
+        bookMapper.updateEntityWithDto(bookDTO, existingBook);
         Book updatedBook = bookRepository.save(existingBook);
-        return modelMapper.map(updatedBook, BookDTO.class);
-    }
 
-    @Transactional
-    public BookDTO patchBook(Long bookId, PatchBookDTO patchBookDTO) {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new NoSuchElementException("Book with id " + bookId + " not found."));
-
-        Optional.ofNullable(patchBookDTO.getTitle()).ifPresent(book::setTitle);
-        Optional.ofNullable(patchBookDTO.getAuthor()).ifPresent(book::setAuthor);
-        Optional.ofNullable(patchBookDTO.getIsbn()).ifPresent(book::setIsbn);
-
-        Book updatedBook = bookRepository.save(book);
-        return modelMapper.map(updatedBook, BookDTO.class);
+        return bookMapper.toDto(updatedBook);
     }
 
     @Transactional
     public void deleteBook(Long bookId) {
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new NoSuchElementException("Book with id " + bookId + " not found."));
+                .orElseThrow(() -> new BookNotFoundException(bookId));
         bookRepository.delete(book);
     }
 
